@@ -24,9 +24,11 @@ button{cursor:pointer;border:0}
 .card h1{margin:0 0 18px;text-align:center;color:var(--pink);font-size:30px;font-weight:700}
 .lbl{display:block;margin:14px 0 8px;font-weight:600;color:var(--deep);font-size:15px}
 
-.msg{display:flex;align-items:center;gap:8px;background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:6px 8px 6px 16px;margin-bottom:10px}
-.msg input{flex:1;min-width:0;border:0;background:transparent;font-size:16px;padding:8px 0}
-.msg input:focus{outline:none}
+.msg{display:flex;align-items:flex-start;gap:8px;background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:6px 8px 6px 16px;margin-bottom:10px}
+.msg textarea{flex:1;min-width:0;border:0;background:transparent;font-size:16px;padding:8px 0;resize:vertical;min-height:56px;line-height:1.4}
+.msg textarea:focus{outline:none}
+.side{display:flex;flex-direction:column;align-items:center;gap:6px;padding-top:4px}
+.cnt{font-size:12px;color:#8a6a75;white-space:nowrap}
 .msg:focus-within{border-color:var(--pink);box-shadow:0 0 0 3px rgba(255,77,109,.15)}
 .btn-x{background:var(--pink2);color:#fff;font-weight:600;font-size:14px;padding:5px 14px;border-radius:10px}
 .add{width:100%;background:transparent;border:2px dashed var(--pink);color:var(--pink);font-weight:600;border-radius:14px;padding:12px;margin-top:6px;font-size:15px}
@@ -74,7 +76,7 @@ button{cursor:pointer;border:0}
 #v-view{position:fixed;inset:0;z-index:5;background:radial-gradient(ellipse at 50% 40%,#5a1230,#2a0716 70%);color:#fff;overflow:hidden}
 #fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 .stagev{position:relative;z-index:2;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center}
-#line{font-size:clamp(24px,5.4vw,44px);line-height:1.5;font-weight:600;max-width:20ch;min-height:3em;opacity:0;transition:opacity .9s;text-shadow:0 0 24px rgba(255,117,143,.6)}
+#line{font-size:clamp(22px,5vw,40px);line-height:1.5;font-weight:600;max-width:min(34ch,92vw);max-height:78vh;overflow-y:auto;white-space:pre-line;min-height:3em;opacity:0;transition:opacity .9s;text-shadow:0 0 24px rgba(255,117,143,.6)}
 #line.show{opacity:1}
 .start{background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.5);color:#fff;font-size:22px;font-weight:600;border-radius:999px;padding:16px 34px}
 .start:hover{background:rgba(255,255,255,.2)}
@@ -184,7 +186,7 @@ button{cursor:pointer;border:0}
 /* ===== Danh sách nhạc: thêm file .mp3 của bạn vào đây =====
    Ví dụ: {name:"Bài 1", url:"nhac/bai1.mp3"}  (đặt file cạnh trang này) */
 var MUSIC = [
-   {name:"Bài 1", url:"nhac/bai1.mp3"},
+  // {name:"Bài 1", url:"nhac/bai1.mp3"},
 ];
 
 var $ = function(id){return document.getElementById(id)};
@@ -217,13 +219,23 @@ function show(name){
 }
 
 /* =================== TRANG TẠO LINK =================== */
+var MAXW = 100;
 function addRow(v){
   var r = document.createElement("div"); r.className = "msg";
-  var i = document.createElement("input"); i.type = "text"; i.maxLength = 120; i.value = v||""; i.placeholder = "Nhập một câu…";
-  i.setAttribute("aria-label","Thông điệp");
+  var i = document.createElement("textarea"); i.rows = 2; i.value = v||"";
+  i.placeholder = "Nhập thông điệp (tối đa 100 từ)…"; i.setAttribute("aria-label","Thông điệp");
+  var side = document.createElement("div"); side.className = "side";
+  var c = document.createElement("span"); c.className = "cnt";
   var x = document.createElement("button"); x.type = "button"; x.className = "btn-x"; x.textContent = "Xóa";
   x.onclick = function(){ r.remove(); };
-  r.appendChild(i); r.appendChild(x); $("rows").appendChild(r);
+  function chk(){
+    var w = i.value.trim().split(/\s+/).filter(Boolean);
+    if (w.length > MAXW){ w = w.slice(0,MAXW); i.value = w.join(" "); }
+    c.textContent = w.length + "/" + MAXW + " từ";
+  }
+  i.addEventListener("input", chk); chk();
+  side.appendChild(x); side.appendChild(c);
+  r.appendChild(i); r.appendChild(side); $("rows").appendChild(r);
   return i;
 }
 $("b-add").onclick = function(){ addRow("").focus(); };
@@ -240,7 +252,7 @@ addRow("Chúc cô luôn khỏe mạnh và hạnh phúc.");
 })();
 
 function readData(){
-  var m = [].map.call($("rows").querySelectorAll("input"), function(i){return i.value.trim()}).filter(Boolean);
+  var m = [].map.call($("rows").querySelectorAll("textarea"), function(i){return i.value.trim()}).filter(Boolean);
   var a = $("music").value;
   if (a === "__custom") a = $("music-url").value.trim();
   if (a && !/^(https?:\/\/|[\w.\-\/]+\.(mp3|m4a|ogg|wav)$)/i.test(a)) a = "";
@@ -250,7 +262,7 @@ function readData(){
 
 $("b-make").onclick = function(){
   var d = readData();
-  if (!d.m.length){ var f = $("rows").querySelector("input") || addRow(""); f.focus(); return; }
+  if (!d.m.length){ var f = $("rows").querySelector("textarea") || addRow(""); f.focus(); return; }
   var url = base() + "?d=" + enc(d);
   lastLink = url;
   $("out").value = url; $("b-open").href = url;
@@ -324,7 +336,8 @@ function run(){
     ln.className = "";
     later(function(){
       ln.textContent = t; ln.className = "show";
-      var hold = Math.max(2200, t.length*70);
+      ln.style.fontSize = t.length > 300 ? "20px" : t.length > 160 ? "26px" : "";
+      var hold = Math.max(2200, t.length*55);
       if (last){ later(function(){ $("v-tools").hidden = false; }, 1200); }
       else {
         later(function(){ ln.className = ""; later(next, 900); }, hold);
