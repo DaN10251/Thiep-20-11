@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tạo link thông điệp 20/11</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<style>
+:root{--pink:#ff4d6d;--pink2:#ff758f;--deep:#9d174d;--soft:#ffe3ea;--line:#ffc2d1;--ink:#4a1d2e;--blue:#5aaee6}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{font-family:"Baloo 2","Segoe UI",system-ui,sans-serif;color:var(--ink);
+  background:linear-gradient(160deg,#ffe9ef,#ffd0dc);background-attachment:fixed}
+[hidden]{display:none!important}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:0}
+:focus-visible{outline:3px solid #c2185b;outline-offset:2px}
+
+.wrap{min-height:100vh;display:flex;justify-content:center;align-items:flex-start;padding:46px 16px 40px}
+.card{width:min(540px,100%);background:#fffafb;border-radius:28px;padding:30px 30px 22px;box-shadow:0 18px 50px rgba(255,77,109,.22)}
+.card h1{margin:0 0 18px;text-align:center;color:var(--pink);font-size:30px;font-weight:700}
+.lbl{display:block;margin:14px 0 8px;font-weight:600;color:var(--deep);font-size:15px}
+
+/* hàng câu */
+.msg{display:flex;align-items:center;gap:8px;background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:6px 8px 6px 16px;margin-bottom:10px}
+.msg input{flex:1;min-width:0;border:0;background:transparent;font-size:16px;padding:8px 0}
+.msg input:focus{outline:none}
+.msg:focus-within{border-color:var(--pink);box-shadow:0 0 0 3px rgba(255,77,109,.15)}
+.btn-x{background:var(--pink2);color:#fff;font-weight:600;font-size:14px;padding:5px 14px;border-radius:10px}
+.add{width:100%;background:transparent;border:2px dashed var(--pink);color:var(--pink);font-weight:600;border-radius:14px;padding:12px;margin-top:6px;font-size:15px}
+.add:hover{background:#fff0f3}
+.select{width:100%;background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:12px 14px;font-size:15px;text-align:center}
+.main{width:100%;margin-top:18px;background:linear-gradient(90deg,var(--pink),var(--pink2));color:#fff;font-weight:700;font-size:19px;letter-spacing:.04em;border-radius:14px;padding:14px;box-shadow:0 8px 18px rgba(255,77,109,.3)}
+.main:hover{filter:brightness(1.05)}
+.result{margin-top:22px;border:2px solid var(--line);border-radius:18px;padding:16px}
+.result input{width:100%;background:#fff5f7;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:13.5px}
+.two{display:flex;gap:10px;margin-top:12px}
+.two button,.two a{flex:1;text-align:center;text-decoration:none;color:#fff;font-weight:600;border-radius:10px;padding:10px;font-size:15px}
+.b-blue{background:var(--blue)} .b-red{background:var(--pink)}
+.warn{margin-top:12px;font-size:13.5px;line-height:1.5;color:#7a4a00;background:#fff3d6;border-radius:10px;padding:9px 12px}
+.center{text-align:center;margin-top:16px}
+.pill{display:inline-block;background:var(--pink);color:#fff;font-weight:600;border-radius:12px;padding:8px 20px;font-size:15px}
+.foot{margin-top:18px;padding-top:12px;border-top:1px solid var(--line);text-align:center;font-size:14px;color:#8a6a75}
+.foot b{color:var(--pink)}
+
+/* ---- trang QR ---- */
+.qwrap{max-width:1000px;margin:0 auto;padding:22px 16px 40px}
+.qwrap h1{margin:0;color:var(--pink);font-size:28px}
+.qwrap .sub{margin:0 0 14px;color:#7a4a5a}
+.qgrid{display:grid;grid-template-columns:1.05fr 1fr;gap:18px;align-items:start}
+@media(max-width:800px){.qgrid{grid-template-columns:1fr}}
+.panel{background:#fffafb;border:1.5px solid var(--line);border-radius:18px;padding:16px}
+.panel textarea{width:100%;min-height:76px;resize:vertical;border:1.5px solid var(--line);border-radius:10px;padding:10px;font-size:15px;background:#fff}
+.small{font-size:14px;color:#6b4a57}
+.tools{display:flex;gap:8px;margin:10px 0}
+.tools button,.chip,.upload{background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:6px 14px;font-size:14.5px;font-weight:500}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.chip.on{background:var(--pink);border-color:var(--pink);color:#fff;font-weight:600}
+.upload{display:inline-flex;align-items:center;gap:6px;margin-top:4px}
+.panel label.sl{display:block;margin-top:12px;font-size:14px;color:#6b4a57}
+.panel input[type=range]{width:100%;accent-color:var(--pink)}
+.opts{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px;font-weight:600;color:var(--deep)}
+.opts input[type=color]{width:42px;height:34px;border:1.5px solid var(--line);border-radius:8px;background:#fff;padding:2px}
+.opts select{border:1.5px solid var(--line);border-radius:10px;padding:6px 10px;background:#fff}
+.stage{background:#fff;border:1.5px solid var(--line);border-radius:16px;padding:12px}
+.stage canvas{display:block;width:100%;height:auto;border-radius:10px}
+.stage .dl{display:block;margin:12px auto 0;background:var(--pink);color:#fff;font-weight:600;border-radius:10px;padding:8px 22px}
+.back{background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:5px 14px;margin-bottom:10px;font-weight:600;color:var(--deep)}
+.err{color:#b00020;font-size:14px;margin:8px 0 0}
+
+/* ---- trang xem thông điệp ---- */
+#v-view{position:fixed;inset:0;z-index:5;background:radial-gradient(ellipse at 50% 40%,#5a1230,#2a0716 70%);color:#fff;overflow:hidden}
+#fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.stagev{position:relative;z-index:2;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center}
+#line{font-size:clamp(24px,5.4vw,44px);line-height:1.5;font-weight:600;max-width:20ch;min-height:3em;opacity:0;transition:opacity .9s;text-shadow:0 0 24px rgba(255,117,143,.6)}
+#line.show{opacity:1}
+.start{background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.5);color:#fff;font-size:22px;font-weight:600;border-radius:999px;padding:16px 34px}
+.start:hover{background:rgba(255,255,255,.2)}
+.vtools{position:absolute;z-index:3;left:0;right:0;bottom:calc(18px + env(safe-area-inset-bottom,0px));display:flex;gap:10px;justify-content:center}
+.vtools button,.vtools a{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.4);color:#fff;text-decoration:none;font-size:15px;font-weight:600;border-radius:999px;padding:8px 18px}
+</style>
+</head>
+<body>
+
+<!-- ===== Trang tạo link ===== -->
+<div id="v-gen" class="wrap">
+  <div class="card">
+    <h1>Nhập thông điệp</h1>
+    <span class="lbl">Thông điệp:</span>
+    <div id="rows"></div>
+    <button class="add" id="b-add" type="button">+ Thêm câu</button>
+
+    <label class="lbl" for="music">Chọn nhạc:</label>
+    <select id="music" class="select"></select>
+    <input id="music-url" class="select" style="margin-top:8px;text-align:left" type="url" placeholder="Dán link file nhạc (.mp3)" hidden>
+
+    <button class="main" id="b-make" type="button">TẠO LINK</button>
+
+    <div class="result" id="result" hidden>
+      <input id="out" type="text" readonly aria-label="Link thông điệp">
+      <div class="two">
+        <a id="b-open" class="b-blue" href="#" target="_blank" rel="noopener">Xem trang</a>
+        <button id="b-copy" class="b-red" type="button">Copy</button>
+      </div>
+      <div class="warn" id="w-file" hidden>Bạn đang mở file trực tiếp từ máy nên link này chỉ dùng được trên máy bạn. Hãy đưa file lên GitHub Pages, Netlify hoặc Cloudflare Pages để người khác truy cập được.</div>
+      <div class="warn" id="w-long" hidden>Link khá dài nên mã QR sẽ dày và khó quét. Hãy rút gọn bớt thông điệp.</div>
+    </div>
+
+    <div class="center"><button class="pill" id="b-qr" type="button">Tạo QR</button></div>
+    <div class="foot">© 2026 · Handmade with love <b>♥</b></div>
+  </div>
+</div>
+
+<!-- ===== Trang tạo QR bó hoa ===== -->
+<div id="v-qr" hidden>
+  <div class="qwrap">
+    <button class="back" id="q-back" type="button">← Quay lại</button>
+    <h1>Tạo QR bó hoa</h1>
+    <p class="sub">Nhập nội dung, QR sẽ nằm giữa bó hoa. Thêm ảnh bó hoa của bạn để dùng làm nền.</p>
+    <div class="qgrid">
+      <div class="panel">
+        <label class="small" for="qtext">Nội dung / liên kết QR</label>
+        <textarea id="qtext"></textarea>
+        <div class="tools">
+          <button id="q-paste" type="button">Paste</button>
+          <button id="q-clear" type="button">✕ Xóa</button>
+        </div>
+
+        <div class="small" style="margin-top:6px">Chọn bó hoa</div>
+        <div class="chips" id="chips"></div>
+        <input type="file" id="file" accept="image/*" multiple hidden>
+        <button class="upload" id="b-upload" type="button">＋ Thêm bó hoa từ ảnh của bạn</button>
+
+        <label class="sl" for="s-size">Kích thước QR: <span id="o-size"></span></label>
+        <input id="s-size" type="range" min="10" max="90" step="0.1" value="42.3">
+        <label class="sl" for="s-rot">Góc xoay: <span id="o-rot"></span></label>
+        <input id="s-rot" type="range" min="0" max="360" step="1" value="45">
+        <label class="sl" for="s-x">Vị trí ngang: <span id="o-x"></span></label>
+        <input id="s-x" type="range" min="0" max="100" step="0.1" value="49.1">
+        <label class="sl" for="s-y">Vị trí dọc: <span id="o-y"></span></label>
+        <input id="s-y" type="range" min="0" max="100" step="0.1" value="46.9">
+
+        <div class="opts">
+          <label for="c-fg">Màu QR</label><input id="c-fg" type="color" value="#c2185b">
+          <label for="c-bg">Màu nền QR</label><input id="c-bg" type="color" value="#ffffff">
+          <select id="shape" aria-label="Kiểu ô">
+            <option value="square">Ô vuông</option>
+            <option value="round">Bo tròn</option>
+            <option value="dot">Chấm tròn</option>
+          </select>
+        </div>
+        <p class="small" style="margin:10px 0 0">Giữ màu QR đậm hơn màu nền để dễ quét.</p>
+      </div>
+
+      <div class="stage">
+        <canvas id="qc" width="900" height="900" aria-label="Xem trước mã QR"></canvas>
+        <div class="err" id="q-err" hidden></div>
+        <button class="dl" id="q-dl" type="button">Tải ảnh QR</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Trang xem thông điệp ===== -->
+<div id="v-view" hidden>
+  <canvas id="fx" aria-hidden="true"></canvas>
+  <div class="stagev">
+    <button class="start" id="v-start" type="button">Chạm để mở ♥</button>
+    <div id="line" aria-live="polite"></div>
+  </div>
+  <div class="vtools" id="v-tools" hidden>
+    <button id="v-replay" type="button">Xem lại</button>
+    <button id="v-back" type="button" hidden>← Quay lại chỉnh sửa</button>
+    <a id="v-make" href="#">Tạo thông điệp của bạn</a>
+  </div>
+  <audio id="aud" loop></audio>
+</div>
+
+<script>
+(function(){
+"use strict";
+/* ===== Danh sách nhạc: thêm file .mp3 của bạn vào đây =====
+   Ví dụ: {name:"Bài 1", url:"nhac/bai1.mp3"}  (đặt file cạnh trang này) */
+var MUSIC = [
+  // {name:"Bài 1", url:"nhac/bai1.mp3"},
+];
+
+var $ = function(id){return document.getElementById(id)};
+var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+var lastLink = "";
+
+/* ---------- mã hóa link ---------- */
+function enc(o){
+  var b = new TextEncoder().encode(JSON.stringify(o)), s = "";
+  for (var i=0;i<b.length;i++) s += String.fromCharCode(b[i]);
+  return btoa(s).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+}
+function dec(str){
+  try{
+    str = str.replace(/-/g,"+").replace(/_/g,"/"); while(str.length%4) str += "=";
+    var bin = atob(str), b = new Uint8Array(bin.length);
+    for (var i=0;i<bin.length;i++) b[i] = bin.charCodeAt(i);
+    var o = JSON.parse(new TextDecoder().decode(b));
+    return (o && Array.isArray(o.m)) ? o : null;
+  }catch(e){return null}
+}
+function base(){ return location.origin + location.pathname; }
+
+/* ---------- chuyển trang ---------- */
+function show(name){
+  ["gen","qr","view"].forEach(function(n){ $("v-"+n).hidden = (n !== name); });
+  document.body.style.overflow = name === "view" ? "hidden" : "";
+  if (name !== "view") stopView();
+  scrollTo(0,0);
+}
+
+/* =================== TRANG TẠO LINK =================== */
+function addRow(v){
+  var r = document.createElement("div"); r.className = "msg";
+  var i = document.createElement("input"); i.type = "text"; i.maxLength = 120; i.value = v||""; i.placeholder = "Nhập một câu…";
+  i.setAttribute("aria-label","Thông điệp");
+  var x = document.createElement("button"); x.type = "button"; x.className = "btn-x"; x.textContent = "Xóa";
+  x.onclick = function(){ r.remove(); };
+  r.appendChild(i); r.appendChild(x); $("rows").appendChild(r);
+  return i;
+}
+$("b-add").onclick = function(){ addRow("").focus(); };
+addRow("Cảm ơn cô đã dạy dỗ chúng em.");
+addRow("Chúc cô luôn khỏe mạnh và hạnh phúc.");
+
+// nhạc
+(function(){
+  var s = $("music");
+  var o = new Option("-- Không chọn nhạc --",""); s.add(o);
+  MUSIC.forEach(function(m){ s.add(new Option(m.name, m.url)); });
+  s.add(new Option("Dán link nhạc của bạn…","__custom"));
+  s.onchange = function(){ $("music-url").hidden = s.value !== "__custom"; };
+})();
+
+function readData(){
+  var m = [].map.call($("rows").querySelectorAll("input"), function(i){return i.value.trim()}).filter(Boolean);
+  var a = $("music").value;
+  if (a === "__custom") a = $("music-url").value.trim();
+  if (a && !/^(https?:\/\/|[\w.\-\/]+\.(mp3|m4a|ogg|wav)$)/i.test(a)) a = "";
+  var d = {m:m}; if (a) d.a = a;
+  return d;
+}
+
+$("b-make").onclick = function(){
+  var d = readData();
+  if (!d.m.length){ var f = $("rows").querySelector("input") || addRow(""); f.focus(); return; }
+  var url = base() + "?d=" + enc(d);
+  lastLink = url;
+  $("out").value = url; $("b-open").href = url;
+  $("result").hidden = false;
+  $("w-file").hidden = location.protocol !== "file:";
+  $("w-long").hidden = url.length < 1500;
+};
+$("b-copy").onclick = function(){
+  var el = $("out"), b = this; el.select();
+  var done = function(){ b.textContent = "Đã copy"; setTimeout(function(){ b.textContent = "Copy"; },1500); };
+  if (navigator.clipboard) navigator.clipboard.writeText(el.value).then(done, function(){ document.execCommand("copy"); done(); });
+  else { document.execCommand("copy"); done(); }
+};
+$("b-qr").onclick = function(){
+  if (lastLink) $("qtext").value = lastLink;
+  show("qr"); drawQR();
+};
+$("b-open").addEventListener("click", function(e){
+  // xem thử ngay trong trang nếu đang mở file local
+  if (location.protocol === "file:"){ e.preventDefault(); startView(readData(), true); }
+});
+
+/* =================== TRANG XEM =================== */
+var vt = [], fxRaf = 0, hearts = [];
+var cv = $("fx"), cx = cv.getContext("2d");
+var G = ["💗","💖","❤️","🌸","💕"];
+function fit(){ var r = devicePixelRatio||1; cv.width = innerWidth*r; cv.height = innerHeight*r; cx.setTransform(r,0,0,r,0,0); }
+addEventListener("resize", fit);
+function spawn(init){
+  hearts.push({x:Math.random()*innerWidth,y:init?Math.random()*innerHeight:-30,s:14+Math.random()*20,
+    v:.5+Math.random()*1.2,w:Math.random()*6.28,a:Math.random()*6.28,r:(Math.random()-.5)*.03,g:G[Math.floor(Math.random()*G.length)]});
+}
+function fxTick(){
+  cx.clearRect(0,0,innerWidth,innerHeight);
+  for (var i=hearts.length-1;i>=0;i--){
+    var p = hearts[i]; p.y += p.v; p.w += .02; p.x += Math.sin(p.w)*.6; p.a += p.r;
+    if (p.y > innerHeight+40){ hearts.splice(i,1); continue; }
+    cx.save(); cx.translate(p.x,p.y); cx.rotate(p.a); cx.font = p.s+"px serif"; cx.globalAlpha = .85; cx.fillText(p.g,0,0); cx.restore();
+  }
+  if (hearts.length < 30 && Math.random() < .1) spawn(false);
+  fxRaf = requestAnimationFrame(fxTick);
+}
+function later(fn, ms){ vt.push(setTimeout(fn, ms)); }
+function stopView(){
+  vt.forEach(clearTimeout); vt.forEach(clearInterval); vt = [];
+  cancelAnimationFrame(fxRaf); hearts = [];
+  var a = $("aud"); a.pause(); a.removeAttribute("src");
+}
+var curData = null, preview = false;
+function startView(d, isPreview){
+  curData = d; preview = !!isPreview;
+  show("view"); fit();
+  $("line").className = ""; $("line").textContent = "";
+  $("v-start").hidden = false; $("v-tools").hidden = true;
+  $("v-back").hidden = !preview; $("v-make").hidden = preview;
+  document.title = "Gửi bạn một thông điệp";
+}
+$("v-start").onclick = function(){
+  $("v-start").hidden = true;
+  var a = $("aud");
+  if (curData.a){ a.src = curData.a; var p = a.play(); if (p && p.catch) p.catch(function(){}); }
+  if (!reduce){ hearts = []; for (var i=0;i<16;i++) spawn(true); cancelAnimationFrame(fxRaf); fxTick(); }
+  run();
+};
+function run(){
+  vt.forEach(clearTimeout); vt = [];
+  $("v-tools").hidden = true;
+  var list = curData.m, i = 0, ln = $("line");
+  (function next(){
+    if (i >= list.length){ $("v-tools").hidden = false; return; }
+    var t = list[i++], last = i === list.length;
+    ln.className = ""; 
+    later(function(){
+      ln.textContent = t; ln.className = "show";
+      var hold = Math.max(2200, t.length*70);
+      if (last){ later(function(){ $("v-tools").hidden = false; }, 1200); }
+      else {
+        later(function(){ ln.className = ""; later(next, 900); }, hold);
+      }
+    }, i === 1 ? 200 : 0);
+  })();
+}
+$("v-replay").onclick = run;
+$("v-back").onclick = function(){ show("gen"); };
+$("v-make").onclick = function(e){ e.preventDefault(); location.href = base(); };
+
+/* =================== TRANG QR BÓ HOA =================== */
+var bouquets = [], cur = -1;
+var qc = $("qc"), qx = qc.getContext("2d");
+if (qrcode.stringToBytesFuncs && qrcode.stringToBytesFuncs["UTF-8"]) qrcode.stringToBytes = qrcode.stringToBytesFuncs["UTF-8"];
+
+function labels(){
+  $("o-size").textContent = (+$("s-size").value).toFixed(1) + "%";
+  $("o-rot").textContent = $("s-rot").value + "°";
+  $("o-x").textContent = (+$("s-x").value).toFixed(1) + "%";
+  $("o-y").textContent = (+$("s-y").value).toFixed(1) + "%";
+}
+function drawQR(){
+  labels();
+  var W = 900, H = 900, im = null;
+  if (cur >= 0){
+    im = bouquets[cur].img;
+    var sc = Math.min(1, 1400/Math.max(im.naturalWidth, im.naturalHeight));
+    W = Math.round(im.naturalWidth*sc); H = Math.round(im.naturalHeight*sc);
+  }
+  qc.width = W; qc.height = H;
+  qx.fillStyle = "#fff"; qx.fillRect(0,0,W,H);
+  if (im) qx.drawImage(im,0,0,W,H);
+  var err = $("q-err"); err.hidden = true;
+  var text = $("qtext").value.trim();
+  if (!text){
+    if (!im){ qx.fillStyle = "#c9a3b0"; qx.font = "600 34px 'Baloo 2',sans-serif"; qx.textAlign = "center";
+      qx.fillText("Nhập nội dung để tạo QR", W/2, H/2); }
+    return;
+  }
+  var q;
+  try{ q = qrcode(0,"M"); q.addData(text,"Byte"); q.make(); }
+  catch(e){ err.textContent = "Nội dung quá dài để tạo mã QR. Hãy rút gọn lại."; err.hidden = false; return; }
+  var n = q.getModuleCount(), quiet = 2, cells = n + quiet*2;
+  var s = Math.min(W,H) * (+$("s-size").value)/100, cell = s/cells;
+  var fg = $("c-fg").value, bg = $("c-bg").value, shape = $("shape").value;
+  qx.save();
+  qx.translate(W*(+$("s-x").value)/100, H*(+$("s-y").value)/100);
+  qx.rotate((+$("s-rot").value) * Math.PI/180);
+  qx.fillStyle = bg;
+  if (qx.roundRect){ qx.beginPath(); qx.roundRect(-s/2,-s/2,s,s,cell*1.2); qx.fill(); } else qx.fillRect(-s/2,-s/2,s,s);
+  qx.fillStyle = fg;
+  for (var r=0;r<n;r++) for (var c=0;c<n;c++){
+    if (!q.isDark(r,c)) continue;
+    var x = -s/2 + (c+quiet)*cell, y = -s/2 + (r+quiet)*cell;
+    if (shape === "dot"){ qx.beginPath(); qx.arc(x+cell/2,y+cell/2,cell*.47,0,6.2832); qx.fill(); }
+    else if (shape === "round" && qx.roundRect){ qx.beginPath(); qx.roundRect(x,y,cell+.4,cell+.4,cell*.3); qx.fill(); }
+    else qx.fillRect(x,y,cell+.4,cell+.4);
+  }
+  qx.restore();
+}
+function chips(){
+  var box = $("chips"); box.innerHTML = "";
+  bouquets.forEach(function(b,i){
+    var c = document.createElement("button"); c.type = "button"; c.className = "chip" + (i===cur?" on":"");
+    c.textContent = "Ảnh " + (i+1); c.setAttribute("aria-pressed", i===cur);
+    c.onclick = function(){ cur = (cur === i ? -1 : i); chips(); drawQR(); };
+    box.appendChild(c);
+  });
+}
+$("b-upload").onclick = function(){ $("file").click(); };
+$("file").onchange = function(){
+  var files = [].slice.call(this.files); this.value = "";
+  files.forEach(function(f){
+    if (!/^image\//.test(f.type)) return;
+    var im = new Image(), url = URL.createObjectURL(f);
+    im.onload = function(){ bouquets.push({img:im}); cur = bouquets.length-1; chips(); drawQR(); };
+    im.src = url;
+  });
+};
+["s-size","s-rot","s-x","s-y","c-fg","c-bg","shape","qtext"].forEach(function(id){ $(id).addEventListener("input", drawQR); });
+$("q-clear").onclick = function(){ $("qtext").value = ""; drawQR(); };
+$("q-paste").onclick = function(){
+  if (!navigator.clipboard || !navigator.clipboard.readText) { $("qtext").focus(); return; }
+  navigator.clipboard.readText().then(function(t){ $("qtext").value = t; drawQR(); }, function(){ $("qtext").focus(); });
+};
+$("q-dl").onclick = function(){
+  qc.toBlob(function(b){
+    var a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = "qr-bo-hoa.png"; a.click();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 2000);
+  }, "image/png");
+};
+$("q-back").onclick = function(){ show("gen"); };
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ if(!$("v-qr").hidden) drawQR(); });
+chips(); labels();
+
+/* =================== KHỞI ĐỘNG =================== */
+var p = new URLSearchParams(location.search).get("d");
+var data = p ? dec(p) : null;
+if (data) startView(data, false); else show("gen");
+})();
+</script>
+</body>
+</html>
