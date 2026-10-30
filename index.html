@@ -346,11 +346,48 @@ function startView(d, isPreview){
 $("v-start").onclick = function(){
   $("v-start").hidden = true;
   var a = $("aud");
-  if (curData.a){ a.src = curData.a; var p = a.play(); if (p && p.catch) p.catch(function(){}); }
+ if (curData.a) a.src = curData.a;
   if (!reduce){ hearts = []; for (var i=0;i<16;i++) spawn(true); cancelAnimationFrame(fxRaf); fxTick(); }
   run();
 };
 function run(){
+  vt.forEach(clearTimeout); vt.forEach(clearInterval); vt = [];
+  $("v-tools").hidden = true;
+  var a = $("aud");
+  if (!curData.a || !a.src) return runTimed();
+  a.onerror = runTimed;
+  if (isFinite(a.duration) && a.duration > 0) runSynced();
+  else a.addEventListener("loadedmetadata", runSynced, {once:true});
+}
+
+function runSynced(){
+  var a = $("aud"), list = curData.m, ln = $("line"), D = a.duration;
+  var w = list.map(function(t){ return Math.max(t.length, 12); });
+  var sum = w.reduce(function(p,c){ return p+c; }, 0);
+  var m = MUSIC.filter(function(x){ return x.url === curData.a; })[0];
+  var starts = [], acc = 0;
+  list.forEach(function(t,i){
+    starts.push(m && m.times && m.times[i] != null ? m.times[i] : acc);
+    acc += D * w[i] / sum;
+  });
+  a.currentTime = 0;
+  var p = a.play(); if (p && p.catch) p.catch(function(){});
+  var shown = -1, last = list.length - 1;
+  vt.push(setInterval(function(){
+    var T = a.currentTime, i = 0;
+    for (var k = 0; k <= last; k++) if (T >= starts[k]) i = k;
+    if (i !== shown){
+      shown = i; var t = list[i];
+      ln.textContent = t; ln.className = "show";
+      ln.style.fontSize = t.length > 300 ? "20px" : t.length > 160 ? "26px" : "";
+    } else if (i < last && T > starts[i+1] - 0.9){
+      ln.className = "";            // mờ dần trước khi sang câu mới
+    }
+    if (i === last && T >= starts[last] + 1.2) $("v-tools").hidden = false;
+  }, 100));
+}
+
+function runTimed(){            // cách cũ, dùng khi không có nhạc
   vt.forEach(clearTimeout); vt = [];
   $("v-tools").hidden = true;
   var list = curData.m, i = 0, ln = $("line");
@@ -363,9 +400,7 @@ function run(){
       ln.style.fontSize = t.length > 300 ? "20px" : t.length > 160 ? "26px" : "";
       var hold = Math.max(2200, t.length*55);
       if (last){ later(function(){ $("v-tools").hidden = false; }, 1200); }
-      else {
-        later(function(){ ln.className = ""; later(next, 900); }, hold);
-      }
+      else { later(function(){ ln.className = ""; later(next, 900); }, hold); }
     }, i === 1 ? 200 : 0);
   })();
 }
